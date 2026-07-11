@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>IELTS Listening Test</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:
+linear-gradient(135deg,#667eea,#764ba2);
+padding:20px;
+}
+
+.card{
+
+width:100%;
+max-width:500px;
+
+background:rgba(255,255,255,.15);
+backdrop-filter:blur(15px);
+
+border-radius:30px;
+
+padding:40px;
+
+text-align:center;
+
+box-shadow:
+0 20px 50px rgba(0,0,0,.2);
+
+color:white;
+}
+
+.logo{
+font-size:70px;
+margin-bottom:15px;
+}
+
+h1{
+font-size:32px;
+margin-bottom:10px;
+}
+
+.subtitle{
+opacity:.9;
+line-height:1.6;
+margin-bottom:30px;
+}
+
+.play-btn{
+
+width:130px;
+height:130px;
+
+border:none;
+border-radius:50%;
+
+cursor:pointer;
+
+font-size:45px;
+
+background:white;
+color:#667eea;
+
+transition:.3s;
+
+box-shadow:
+0 10px 30px rgba(0,0,0,.2);
+}
+
+.play-btn:hover{
+transform:scale(1.05);
+}
+
+.play-btn:disabled{
+cursor:not-allowed;
+opacity:.7;
+}
+
+.status{
+margin-top:25px;
+font-size:18px;
+font-weight:600;
+}
+
+.timer-box{
+
+margin-top:25px;
+
+background:rgba(255,255,255,.15);
+
+padding:15px;
+
+border-radius:15px;
+}
+
+.time{
+font-size:28px;
+font-weight:700;
+}
+
+.progress{
+
+height:10px;
+width:100%;
+
+background:rgba(255,255,255,.2);
+
+border-radius:50px;
+
+margin-top:12px;
+
+overflow:hidden;
+}
+
+.progress-bar{
+
+height:100%;
+width:0%;
+
+background:white;
+
+transition:.3s;
+}
+
+.locked{
+
+background:#ff4d4d!important;
+color:white!important;
+}
+
+.warning{
+margin-top:25px;
+font-size:14px;
+opacity:.8;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<div class="logo">🎧</div>
+
+<h1>IELTS Listening Test</h1>
+
+<p class="subtitle">
+Bạn chỉ được nghe audio một lần duy nhất.
+Sau khi hoàn thành bài nghe sẽ tự động khóa.
+</p>
+
+<button id="playBtn" class="play-btn">
+▶
+</button>
+
+<div id="status" class="status">
+Sẵn sàng bắt đầu
+</div>
+
+<div class="timer-box">
+
+<div id="time" class="time">
+00:00
+</div>
+
+<div class="progress">
+<div id="progressBar" class="progress-bar"></div>
+</div>
+
+</div>
+
+<p class="warning">
+⚠ Không thể phát lại sau khi bắt đầu
+</p>
+
+<audio id="audio">
+<source src="https://drive.google.com/file/d/1v-Oi7BpPpFid0Xcg0vJpnn6NU0GzlbWT/view?usp=sharing">
+</audio>
+
+</div>
+
+<script>
+
+const STORAGE_KEY = "IELTS_LISTENING_LOCK";
+
+const playBtn = document.getElementById("playBtn");
+const audio = document.getElementById("audio");
+const statusText = document.getElementById("status");
+const timeText = document.getElementById("time");
+const progressBar = document.getElementById("progressBar");
+
+if(localStorage.getItem(STORAGE_KEY)){
+
+playBtn.disabled = true;
+
+playBtn.classList.add("locked");
+
+playBtn.innerHTML = "🔒";
+
+statusText.innerHTML =
+"Audio đã được sử dụng";
+
+}
+
+playBtn.addEventListener("click",()=>{
+
+if(localStorage.getItem(STORAGE_KEY)) return;
+
+localStorage.setItem(STORAGE_KEY,"used");
+
+audio.play();
+
+playBtn.disabled = true;
+
+statusText.innerHTML =
+"Đang phát...";
+
+});
+
+audio.addEventListener("timeupdate",()=>{
+
+const current = audio.currentTime;
+const duration = audio.duration;
+
+if(duration){
+
+const progress =
+(current/duration)*100;
+
+progressBar.style.width =
+progress+"%";
+
+let min =
+Math.floor(current/60);
+
+let sec =
+Math.floor(current%60);
+
+if(min<10) min="0"+min;
+if(sec<10) sec="0"+sec;
+
+timeText.innerHTML =
+`${min}:${sec}`;
+
+}
+
+});
+
+audio.addEventListener("ended",()=>{
+
+statusText.innerHTML =
+"✅ Hoàn thành bài nghe";
+
+playBtn.innerHTML = "🔒";
+
+playBtn.classList.add("locked");
+
+});
+
+document.addEventListener(
+"contextmenu",
+e=>e.preventDefault()
+);
+
+document.addEventListener(
+"keydown",
+e=>{
+
+if(e.key==="F12"){
+
+e.preventDefault();
+
+}
+
+}
+);
+
+</script>
+
+</body>
+</html>
