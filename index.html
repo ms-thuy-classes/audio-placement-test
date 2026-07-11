@@ -1,299 +1,186 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>IELTS Listening Test</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
-}
-
-body{
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-background:
-linear-gradient(135deg,#667eea,#764ba2);
-padding:20px;
-}
-
-.card{
-
-width:100%;
-max-width:500px;
-
-background:rgba(255,255,255,.15);
-backdrop-filter:blur(15px);
-
-border-radius:30px;
-
-padding:40px;
-
-text-align:center;
-
-box-shadow:
-0 20px 50px rgba(0,0,0,.2);
-
-color:white;
-}
-
-.logo{
-font-size:70px;
-margin-bottom:15px;
-}
-
-h1{
-font-size:32px;
-margin-bottom:10px;
-}
-
-.subtitle{
-opacity:.9;
-line-height:1.6;
-margin-bottom:30px;
-}
-
-.play-btn{
-
-width:130px;
-height:130px;
-
-border:none;
-border-radius:50%;
-
-cursor:pointer;
-
-font-size:45px;
-
-background:white;
-color:#667eea;
-
-transition:.3s;
-
-box-shadow:
-0 10px 30px rgba(0,0,0,.2);
-}
-
-.play-btn:hover{
-transform:scale(1.05);
-}
-
-.play-btn:disabled{
-cursor:not-allowed;
-opacity:.7;
-}
-
-.status{
-margin-top:25px;
-font-size:18px;
-font-weight:600;
-}
-
-.timer-box{
-
-margin-top:25px;
-
-background:rgba(255,255,255,.15);
-
-padding:15px;
-
-border-radius:15px;
-}
-
-.time{
-font-size:28px;
-font-weight:700;
-}
-
-.progress{
-
-height:10px;
-width:100%;
-
-background:rgba(255,255,255,.2);
-
-border-radius:50px;
-
-margin-top:12px;
-
-overflow:hidden;
-}
-
-.progress-bar{
-
-height:100%;
-width:0%;
-
-background:white;
-
-transition:.3s;
-}
-
-.locked{
-
-background:#ff4d4d!important;
-color:white!important;
-}
-
-.warning{
-margin-top:25px;
-font-size:14px;
-opacity:.8;
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS Placement Test - Ms. Thúy</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 </head>
-
 <body>
+    <!-- Student Info Section -->
+    <div id="student-info" class="container">
+        <div class="glass-card">
+            <h1>IELTS Placement Test</h1>
+            <h2>Designed by Ms. Thúy</h2>
+            <form id="student-form">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="student-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="student-email" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="student-phone" required>
+                </div>
+                <button type="submit" class="btn-primary">Start Test</button>
+            </form>
+        </div>
+    </div>
 
-<div class="card">
+    <!-- Test Navigation -->
+    <div id="test-nav" class="hidden">
+        <div class="nav-header glass-card">
+            <h2>IELTS Placement Test</h2>
+            <div class="student-info-display">
+                <span id="display-name"></span>
+            </div>
+        </div>
+        <div class="test-tabs">
+            <button class="tab-btn active" data-test="listening">Listening</button>
+            <button class="tab-btn" data-test="reading">Reading</button>
+            <button class="tab-btn" data-test="writing">Writing</button>
+        </div>
+    </div>
 
-<div class="logo">🎧</div>
+    <!-- Listening Test -->
+    <div id="listening-test" class="test-section hidden">
+        <div class="test-header glass-card">
+            <h3>Listening Test</h3>
+            <div class="timer-display">
+                <span id="listening-timer">30:00</span>
+                <div class="progress-bar">
+                    <div id="listening-progress" class="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="listening-controls glass-card">
+            <audio id="listening-audio" src="/assets/audio/listening.mp3"></audio>
+            <button id="start-listening" class="btn-primary">Start Listening</button>
+            <p class="warning-text">⚠️ You can only listen ONCE. No rewind allowed.</p>
+        </div>
 
-<h1>IELTS Listening Test</h1>
+        <div class="questions-container glass-card">
+            <h4>Answer Sheet</h4>
+            <form id="listening-answers">
+                <!-- Questions will be loaded dynamically -->
+            </form>
+            <button id="submit-listening" class="btn-primary hidden">Submit Listening</button>
+        </div>
+    </div>
 
-<p class="subtitle">
-Bạn chỉ được nghe audio một lần duy nhất.
-Sau khi hoàn thành bài nghe sẽ tự động khóa.
-</p>
+    <!-- Reading Test -->
+    <div id="reading-test" class="test-section hidden">
+        <div class="test-header glass-card">
+            <h3>Reading Test</h3>
+            <div class="timer-display">
+                <span id="reading-timer">60:00</span>
+                <div class="progress-bar">
+                    <div id="reading-progress" class="progress-fill"></div>
+                </div>
+            </div>
+        </div>
 
-<button id="playBtn" class="play-btn">
-▶
-</button>
+        <div class="reading-layout">
+            <div class="pdf-viewer glass-card">
+                <canvas id="pdf-canvas"></canvas>
+            </div>
+            <div class="answer-sheet glass-card">
+                <h4>Answer Sheet</h4>
+                <form id="reading-answers">
+                    <!-- Questions will be loaded dynamically -->
+                </form>
+                <button id="submit-reading" class="btn-primary hidden">Submit Reading</button>
+            </div>
+        </div>
+    </div>
 
-<div id="status" class="status">
-Sẵn sàng bắt đầu
-</div>
+    <!-- Writing Test -->
+    <div id="writing-test" class="test-section hidden">
+        <div class="test-header glass-card">
+            <h3>Writing Test</h3>
+            <div class="timer-display">
+                <span id="writing-timer">60:00</span>
+                <div class="progress-bar">
+                    <div id="writing-progress" class="progress-fill"></div>
+                </div>
+            </div>
+        </div>
 
-<div class="timer-box">
+        <div class="writing-tasks">
+            <div class="task-card glass-card">
+                <h4>Task 1 (Minimum 150 words)</h4>
+                <div class="word-count">Word Count: <span id="task1-count">0</span></div>
+                <textarea id="task1-text" placeholder="Write your Task 1 response here..."></textarea>
+            </div>
 
-<div id="time" class="time">
-00:00
-</div>
+            <div class="task-card glass-card">
+                <h4>Task 2 (Minimum 250 words)</h4>
+                <div class="word-count">Word Count: <span id="task2-count">0</span></div>
+                <textarea id="task2-text" placeholder="Write your Task 2 response here..."></textarea>
+            </div>
+        </div>
 
-<div class="progress">
-<div id="progressBar" class="progress-bar"></div>
-</div>
+        <button id="submit-writing" class="btn-primary">Submit Writing</button>
+    </div>
 
-</div>
+    <!-- Results Dashboard -->
+    <div id="results-dashboard" class="container hidden">
+        <div class="glass-card results-card">
+            <h2>Test Results</h2>
+            <div class="student-results">
+                <h3 id="result-name"></h3>
+                <p id="result-email"></p>
+            </div>
 
-<p class="warning">
-⚠ Không thể phát lại sau khi bắt đầu
-</p>
+            <div class="result-section">
+                <h4>Listening</h4>
+                <div class="score-display">
+                    <div class="score-item">
+                        <span class="label">Correct Answers:</span>
+                        <span id="listening-correct" class="value"></span>
+                    </div>
+                    <div class="score-item">
+                        <span class="label">Percentage:</span>
+                        <span id="listening-percentage" class="value"></span>
+                    </div>
+                </div>
+            </div>
 
-<audio id="audio">
-   <source src="Test 7 (1).mp3" type="audio/mpeg">
-</audio>
+            <div class="result-section">
+                <h4>Reading</h4>
+                <div class="score-display">
+                    <div class="score-item">
+                        <span class="label">Correct Answers:</span>
+                        <span id="reading-correct" class="value"></span>
+                    </div>
+                    <div class="score-item">
+                        <span class="label">Percentage:</span>
+                        <span id="reading-percentage" class="value"></span>
+                    </div>
+                </div>
+            </div>
 
-</div>
+            <div class="result-section">
+                <h4>Writing</h4>
+                <p id="writing-status">Submitted Successfully ✓</p>
+            </div>
 
-<script>
+            <div class="result-section recommendation">
+                <h4>Overall Recommendation</h4>
+                <p id="recommendation-level" class="level-badge"></p>
+            </div>
 
-const STORAGE_KEY = "IELTS_LISTENING_LOCK";
+            <button id="restart-test" class="btn-primary">Take Another Test</button>
+        </div>
+    </div>
 
-const playBtn = document.getElementById("playBtn");
-const audio = document.getElementById("audio");
-const statusText = document.getElementById("status");
-const timeText = document.getElementById("time");
-const progressBar = document.getElementById("progressBar");
-
-if(localStorage.getItem(STORAGE_KEY)){
-
-playBtn.disabled = true;
-
-playBtn.classList.add("locked");
-
-playBtn.innerHTML = "🔒";
-
-statusText.innerHTML =
-"Audio đã được sử dụng";
-
-}
-
-playBtn.addEventListener("click",()=>{
-
-if(localStorage.getItem(STORAGE_KEY)) return;
-
-localStorage.setItem(STORAGE_KEY,"used");
-
-audio.play();
-
-playBtn.disabled = true;
-
-statusText.innerHTML =
-"Đang phát...";
-
-});
-
-audio.addEventListener("timeupdate",()=>{
-
-const current = audio.currentTime;
-const duration = audio.duration;
-
-if(duration){
-
-const progress =
-(current/duration)*100;
-
-progressBar.style.width =
-progress+"%";
-
-let min =
-Math.floor(current/60);
-
-let sec =
-Math.floor(current%60);
-
-if(min<10) min="0"+min;
-if(sec<10) sec="0"+sec;
-
-timeText.innerHTML =
-`${min}:${sec}`;
-
-}
-
-});
-
-audio.addEventListener("ended",()=>{
-
-statusText.innerHTML =
-"✅ Hoàn thành bài nghe";
-
-playBtn.innerHTML = "🔒";
-
-playBtn.classList.add("locked");
-
-});
-
-document.addEventListener(
-"contextmenu",
-e=>e.preventDefault()
-);
-
-document.addEventListener(
-"keydown",
-e=>{
-
-if(e.key==="F12"){
-
-e.preventDefault();
-
-}
-
-}
-);
-
-</script>
-
+    <script src="script.js"></script>
 </body>
 </html>
